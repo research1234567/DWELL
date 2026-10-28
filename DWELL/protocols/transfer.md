@@ -1,0 +1,22 @@
+# Locked protocol: stability-boundary transfer
+Locked before outcome sweep, 2026-10-27. No manuscript edits.
+
+Question: does eta_c = normalized threshold gain_c predict local stability of a rolling-window level controller? This is not a loss-optimality or ensemble theorem.
+
+Source: latest conformal_feedback_ablation_complete_source.zip, unchanged. Direct model is code/core.py; actual level/quantile conventions match env_bench.py's fixed arm. Target alpha=.1; logit-normal sigma=.5.
+
+Grid: original calm (-.5,3,d=1), mild (-1,24,d=6), severe (-1,48,d=12). Windows 100 and 500 (500 is the paper default). Ratios eta/eta_c = .25,.5,.75,1,1.25,1.5,2. All cells retained. No selection by outcome.
+
+Layers:
+1. Direct nonlinear deterministic threshold map: q[t+1]=q[t]+eta/f*(.9-F(q[t]|q[t-d])). Start on the dominant eigenmode at relative threshold amplitudes 1e-6 and 1e-5; compare finite-horizon log amplification with the linear map. Use horizon up to 200 or enough to predict 100-fold amplification/decay, stopping nonlinear measurement when departing .001*qstar or reaching floating-point floor. Sign below/above boundary is a diagnostic of theorem/implementation consistency, not empirical proof.
+2. Frozen population quantile control: level a, q=H^-1(1-a), mean error. Same infinitesimal initial mode and linear threshold prediction. This isolates the density conversion.
+3. Moving-window population linearization: q[t+1]=(1-eta)q[t]-rho*(eta+1/W)*q[t-d]+rho/W*q[t-W-d]. The last term is window replacement, absent from the scalar theorem. Compute its first unit-circle crossing independently by the complex frequency equation, checking all admissible branches and real crossings. This is an analytic diagnostic, not a theorem for an empirical quantile or ensemble. Verify against finite-difference Jacobian of a nonlinear moving-population quantile step at equilibrium.
+4. Actual finite rolling empirical controller, constant environment: T=4000 (first 1000 discarded for descriptive steady-state summaries), 64 matched seeds (0..63), initially iid equilibrium scores, unprojected level, fixed-arm clipping of quantile probability. Common outcome innovations across ratio cells and perturbation pairs. Paired +/- initial-level shifts .002 and .01 (five arms including zero). Window samples equal across pairs, initial deployed history qstar. No fitted noise-onset boundary.
+
+Metrics: direct finite-horizon amplification vs predicted roots; moving-window diagnostic boundary relative to threshold eta_c; empirical MSE to qstar, centered variance, lag-one correlation, full/empty-level fraction and pinball (secondary). Paired mean impulse response and Monte Carlo standard errors over all seeds; report whether the 95% paired-mean CI excludes zero in the last 500 observations, without calling it an instability test. Also report predeclared above(.1.25,1.5,2)/below(.25,.5,.75) comparisons. Since bounded noisy chains have no finite-sample binary instability label, empirical data can support or limit usefulness of the scale, not prove identical boundaries. Neither quiet finite runs nor path separation refutes the scalar theorem.
+
+Resolution/criteria: root branches bracketed on 20,001 angular points then Brent tolerance 1e-12; numerical ambiguity if branches closer than that grid/resolution. Direct discrepancies judged against amplitude convergence and floating-point floor, not hand-picked percent tolerances. Empirical uncertainty is across-seed 95% t intervals; no accept/reject tolerance invented for boundary transfer. If moving-window first boundary differs, exact equality of boundary does not transfer even before noise. Report all cells and caveats. No p-value fishing or claiming lowest loss from stability.
+
+Resource limit: smoke first, bounded local run only. If full vectorized run extrapolates beyond 15 minutes, stop and report design/runtime blocker, not silently shrink the grid or seeds. Preserve original source and results. Protocol and script SHA256 logged before sweep. New outputs live only in transfer_results.
+
+Smoke outcome (before full sweep): 8 seeds, 1100 steps, all ratios and five arms at W=500 took .92 seconds. Linear extrapolation to 64 seeds, 4000 steps and six cells is about 160 seconds plus roots/IO; feasible under resource limit. Storage amendment only: retain seed-level metric arrays, time-series ensemble means and paired summaries rather than all 430 MB of threshold histories; runner can regenerate histories. No grid, criterion, or measurement changed.

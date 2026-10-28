@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+.venv/
+work/
+data/external/*
+!data/external/README.md
+.env
+.env.*
+*.pem
+*.key
+*.tex
+*.cls
+*.sty
+*.aux
+*.log
+*.pdf
+.DS_Store

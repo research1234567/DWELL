@@ -1,0 +1,37 @@
+{
+ "mild": {
+  "rho_bar": 2.7813012746533348,
+  "d_min": 9,
+  "double_eta": 0.07274759642411358,
+  "mp_status": "OK",
+  "mp_eta": 0.07274759642411358,
+  "cap": 0.03637379821205679,
+  "scalar_cap": 0.03769792289289294
+ },
+ "severe": {
+  "rho_bar": 3.594601907707718,
+  "d_min": 18,
+  "double_eta": 0.02346856630917756,
+  "mp_status": "OK",
+  "mp_eta": 0.02346856630917746,
+  "cap": 0.01173428315458873,
+  "scalar_cap": 0.01428518086630153
+ },
+ "vsevere": {
+  "rho_bar": 3.127173382821478,
+  "d_min": 36,
+  "double_eta": 0.01379786793686643,
+  "mp_status": "OK",
+  "mp_eta": 0.013797867936874679,
+  "cap": 0.006898933968437339,
+  "scalar_cap": 0.008689056966316043
+ },
+ "extreme": {
+  "status": "UNDEFINED: 16 of 90 delays in 1..90 have no stable start",
+  "first_no_start": [
+   75,
+   76,
+   77
+  ]
+ }
+}
